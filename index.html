@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html>
+<title></title>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css" />
+	<link rel="stylesheet" href="css/numbergametheme.min.css" />
+	<link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
+	
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+	<style type="text/css" media="screen">
+		
+	<style type="text/css" media="screen">
+		
+		.ops {
+			width:18px;
+			height:22px;
+			margin-bottom: -5px;
+			margin-left: 15px;
+			background-color:rgb(169, 169, 173);
+			box-shadow: 1px 1px 4px #888888;
+			font-size: medium;
+			font-weight: bolder;
+		}
+		.hintans {
+			display: inline;
+			width:30px;
+			height:30px;
+			background-color:rgb(0, 0, 173);
+			padding: 0px 2px 0px 2px ;
+		}
+		.numques {
+			width:18px;
+			height:22px;
+			margin-bottom: -5px;
+			margin-left: 15px;
+			background-color:rgb(169, 169, 173);
+			box-shadow: 1px 1px 4px #888888;
+			font-size: medium;
+			font-weight: bolder;
+		}
+		/*
+		#success {
+			background: transparent url(http://c5.quickcachr.fotos.sapo.pt/i/oe7115a07/14585078_0PKec.jpeg) !important;
+			background-repeat:repeat !important;
+		}
+		*/
+
+	</style>
+
+	</style>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		if (Modernizr.localstorage) {
+			//Setting Game Level default value to 1
+			var gameLevel = 1;
+			var gameScore = 1;
+			var res = '';
+			var numbers = new Array();
+			var usedOperators = new Array();
+			var finalRes = 0;
+			var number1 = new Array();
+			var result  = ''
+			var operator = ['+','-','/','*','%','^'];
+			var skipCounter = 0;
+			var userSolution = '';
+			gameStart();
+
+			function gameStart() {
+				$(".hintans").html("");
+				gameLevel = 1;
+				gameScore = 0;
+				res = '';
+				numbers = new Array();
+				usedOperators = new Array();
+				finalRes = 0;
+				number1 = new Array();
+				result  = ''
+				operator = ['+','-','/','*','%','^'];
+				userSolution = '';
+
+				temp = window.localStorage.getItem("gameScore");
+				if (isNaN(temp)) {
+					window.localStorage.setItem("gameScore", gameScore);			
+				}
+				window.localStorage.setItem("gameLevel", gameLevel);
+
+				$("#gameScore").html(parseInt(window.localStorage.getItem("gameScore")));
+
+				for (var i = 3; i >= 0; i--) {
+					number1[i] = Math.floor((Math.random() * 10) + 1);
+				};
+				//result = number1[temp] + operator[temp] + number3[temp];
+
+				for (var i = 3; i > 0; i--) {
+					opIndex = getNewTemp();
+					
+					if (opIndex == 3) {
+						opIndex = 2;
+					}
+					
+					if (typeof res === 'undefined' || res == '') {
+						res = resultGenerator(operator[opIndex], number1[opIndex], number1[opIndex + 1]);
+						numbers.push(number1[opIndex]);
+						numbers.push(number1[opIndex + 1]);
+						usedOperators.push('(');
+						usedOperators.push(number1[opIndex]);
+						usedOperators.push(operator[opIndex]);
+						usedOperators.push(number1[opIndex + 1]);
+						usedOperators.push(')');
+					} else {
+						//numbers.push(res);
+						res = resultGenerator(operator[opIndex], res, number1[opIndex]);
+						usedOperators.push(operator[opIndex]);
+						usedOperators.unshift('(');
+						numbers.push(number1[opIndex]);
+						usedOperators.push(number1[opIndex]);
+						usedOperators.push(')');
+					}
+					//usedOperators.push(operator[opIndex]);
+				};
+
+				res = Math.abs(Math.floor(res));
+
+				if (typeof tempres === 'undefined' || tempres == '' || isNaN(tempres)) {
+				
+				/*				
+					if (skipCounter > 3) {
+						$.mobile.changePage( "#failure", { transition: "flip"} );
+						$('#userans').val('');
+						skipCounter = 0;
+					} else {
+						giveBonusPoint();
+						$.mobile.changePage( "#bonus", { transition: "flip"} );
+						$('#userans').val('');
+					}
+					if (skipCounter > 10) {
+						giveBonusPoint();
+						$.mobile.changePage( "#bonus", { transition: "flip"} );
+					} else {
+						gameStart();
+					}
+				*/			
+				};
+				$("#res").html(res);
+				setNumbers(numbers);
+			}
+
+			$("#hintclick").click(function(e){
+				e.preventDefault();
+				$(".hintans").html(usedOperators.join("	"));
+			});
+			
+			$("#gotohomefromgame").click(function(e){
+				e.preventDefault();
+				$.mobile.changePage("#start", { transition: "flip"} );
+			});
+
+			$("body").on("click", ".numques_bak", function(e){
+				var num = $(this).attr('data-num');
+				var exitVal = $("#userans").val();
+				$("#userans").val(exitVal + num);
+				$(this).effect("bounce", 'easeInBounce', 300);
+			});
+
+			$("body").on("click", ".ops", function(e){
+				$(this).effect("bounce", 'easeInBounce', 300);
+				var num = $(this).attr('data-ops');
+				var exitVal = $("#userans").val();
+				$("#userans").val(exitVal + num);
+			});
+
+			$("#usersubmit").click(function(e){
+				var str = $("#userans").val();
+				userSolution = str;
+				if (numberEntryCheck(str)) {
+					finalRes = eval(str);
+					finalRes = parseInt(Math.abs(Math.floor(finalRes)));
+					res = parseInt(res);
+					console.log(finalRes);
+					console.log(res);
+					if (res == finalRes) {
+						var temp = parseInt(window.localStorage.getItem("gameScore"));
+						gameScore = eval( temp + 1);
+						localStorage.setItem("gameScore", gameScore);
+						$("#gameScore").html(window.localStorage.getItem("gameScore"));
+						//alert("success");
+						$.mobile.changePage( "#success", { transition: "flip"} );
+						$("#successscore").html(window.localStorage.getItem("gameScore"));
+						$('#userans').val('');
+					} else {
+						//alert("fail");
+						$.mobile.changePage( "#failure", { transition: "flip"} );
+						$("#yoursolution").html(userSolution);
+						var temp = eval(userSolution);
+						
+						temp = parseInt(temp);
+						
+						if (isNaN(temp)) {
+							$("#yourresult").html("Can't Calculate");	
+						} else {
+							$("#yourresult").html(temp);	
+						}
+						$("#expectedsol").html(usedOperators.join("	"));
+						var finalres = Math.abs(Math.floor(res));
+						$("#expectedresult").html(finalres);
+						$("#failscore").html(window.localStorage.getItem("gameScore"));
+						$('#userans').val('');
+					}
+
+				} else {
+					$.mobile.changePage( "#failure", { transition: "flip"} );
+					$("#yoursolution").html(userSolution);
+					var temp = eval(userSolution);
+					temp = parseInt(temp);
+					
+					if (isNaN(temp)) {
+						$("#yourresult").html("OOPS!!! Can't Calculate.");	
+					} else {
+						$("#yourresult").html(temp);	
+					}
+					$("#expectedsol").html( usedOperators.join(" ") );
+					var finalres = Math.abs(Math.floor(res));
+					$("#expectedresult").html(finalres);
+					$("#failscore").html(window.localStorage.getItem("gameScore"));
+					$('#userans').val('');
+				}
+			});
+
+			$("#gameskip").click(function(e){
+				e.preventDefault();
+				skipCounter++;
+				gameStart();
+			});
+
+			$(".playmore").click(function(e){
+				$.mobile.changePage( "#game", { transition: "flip"} );
+				gameStart();
+			});
+
+			$("#clear").click(function(e){
+				$('#userans').val('');
+			});
+
+			$("#howToPlay").click(function(e){
+				e.preventDefault();
+				$("#dynamic").html("");
+				var str = "<h2>Simple Game for BadAss. Are You?</h2>";
+				str += "<h3>We will give you a list operators : &nbsp;+&nbsp;&nbsp;,&nbsp;-&nbsp;,&nbsp;&nbsp;*&nbsp;,&nbsp;&nbsp;/&nbsp;,^&nbsp;,&nbsp;&nbsp;%&nbsp;.<br/><br/>";
+				str += "We will give you 4 child numbers and a Boss number.<br/>";
+				str += "Use given operators, 4 numbers and your brain.<br/>";
+				str += "And make this Boss number.</h3>";
+				str += "<h2> Boss Number will always be an absolute and positive number. Ex : Suppose you got boss Number = - 4.65 so answer will be 4 </h2>";
+				str += "<h2>Easy!!! So comeon make your brain sharp.</h2>";
+				$("#dynamic").html(str);
+			});
+
+			$("#yourScore").click(function(e){
+				e.preventDefault();
+				var str = "";
+				//$("#dynamic").html(str);
+				str += "<div class='ui-grid-b'>";
+				str += "<div class='ui-block-a'></div>";
+				str += "<div class='ui-block-b' style='padding-right:100px;'>" + 
+						"<h2>" + localStorage.getItem("gameScore") + "</h2></div>";
+	    		str += "<div class='ui-block-c'></div>";
+				str += "</div>";
+				$("#dynamic").html(str);
+			});
+
+			function numberEntryCheck(str) {
+				if (str === null || str == '' || typeof str === 'undefined') {
+					return false;
+				};
+				var eNumber = new Array();
+				var regex 	= /(\d+)/g;
+				eNumber		= str.match(regex);
+				var tempNum = new Array();
+				
+				tempNum = numbers;
+
+				while(1) {
+					var eNum = eNumber.pop();
+					if (typeof eNum === 'undefined') {
+						return true;
+					};
+					if (!isNaN(eNum)) {
+						var res = $.inArray(parseInt(eNum),tempNum);
+						if (res == -1) {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+
+			function giveBonusPoint() {
+				var temp = parseInt(window.localStorage.getItem("gameScore"));
+				gameScore = eval( temp + 1);
+				window.localStorage.setItem("gameScore", gameScore);
+			}
+
+			function setNumbers (numbers) {
+				var str = '';
+				var class_name = '';
+				
+				if (numbers.length > 4) {
+					gameStart();
+				} else {
+					for (var i = numbers.length - 1; i >= 0; i--) {
+						if (i == 3) {
+							class_name = "ui-block-a";	
+						} else if(i == 2) {
+							class_name = "ui-block-b";
+						} else if(i == 1) {
+							class_name = "ui-block-c";
+						} else if(i == 0) {
+							class_name = "ui-block-d";
+						}
+						
+						str += "<div class='" + class_name + " numques_bak' data-num='" +numbers[i] + "'>&nbsp" + "<div class='ui-bar ui-bar-a numques'>" + numbers[i] + "</div>" + "&nbsp</div>";
+					}
+					$("#num").html(str);
+				}
+			}
+
+			function refreshPage() {
+				$.mobile.changePage(
+					window.location.href,
+					{
+						allowSamePageTransition : true,
+						transition              : 'none',
+						showLoadMsg             : false,
+						reloadPage              : true
+					}
+				);
+			}
+
+			function resetGame() {
+				window.localStorage.setItem("gameScore", 0);
+				window.localStorage.setItem("gameLevel", 1);
+			}
+
+			function getNewTemp() {
+				var temp = Math.floor((Math.random() * 10) + 1);
+				temp = temp % 3;
+				return temp;
+			}
+
+			function resultGenerator(operator, num1, num2) {
+				result = '';
+				op = '';
+				console.log(operator);
+				switch(operator) {
+					case '+' : result = num1 + num2; break;
+					case '-' : result = num1 - num2; break;
+					case '*' : result = num1 * num2; break;
+					case '/' : result = num1 / num2; break;
+					case '^' : result = Math.pow(num1, num2); break;
+					case '%' : result = num1 % num2; break;
+				}
+				if (typeof result === "undefined" || result == "") {
+					resultGenerator();
+				} else {
+					return result;	
+				}
+				
+			}
+
+		} else {
+			$("#main").css("display", "none");
+			alert("Please update your browser");
+		}
+
+
+	});
+</script>
+	
+</head>
+<body>
+	<div data-role="page" id="start" data-theme="a" style="background">
+
+		<div role="main" class="ui-content" data-theme="a">
+			<a href="#game" data-transition="turn" class="ui-btn ui-corner-all">Start Game</a>
+			<a href="#" id="howToPlay" data-transition="turn" class="ui-btn ui-corner-all">How To Play</a>
+			<a href="#" id="yourScore" data-transition="turn" class="ui-btn ui-corner-all">Your Score</a>
+			<div style="" id="dynamic"></div>
+		</div><!-- /content -->
+
+	</div><!-- /page -->
+
+	<div data-role="page" id="game" data-theme="a"  data-cache="false">
+
+		<div data-role="header" data-theme="a">
+			<h1>Crazy Digits</h1>
+			<a href="#" id='gameScore' data-icon="gear" class="ui-btn-right">10</a>
+		</div><!-- /header -->
+
+		<div role="main" class="ui-content" data-theme="a">
+
+			<h4 style="margin-top: -5px;">Use following operators : </h4>
+			<div class="ui-grid-d" style = "margin:0px;padding:0px">
+				<div class="ui-block-a"><div class="ui-bar ui-bar-a ops" data-ops='+'>&nbsp+&nbsp</div></div>
+				<div class="ui-block-b"><div class="ui-bar ui-bar-a ops" data-ops='-'>&nbsp-&nbsp</div></div>
+				<div class="ui-block-c"><div class="ui-bar ui-bar-a ops" data-ops='*'>&nbsp*&nbsp</div></div>
+				<div class="ui-block-d"><div class="ui-bar ui-bar-a ops" data-ops='/'>&nbsp/&nbsp</div></div>
+				<div class="ui-block-a"><div class="ui-bar ui-bar-a ops" data-ops='%'>&nbsp%&nbsp</div></div>
+				<div class="ui-block-b"><div class="ui-bar ui-bar-a ops" data-ops='^'>&nbsp^&nbsp</div></div>
+				<div class="ui-block-c"><div class="ui-bar ui-bar-a ops" data-ops='('>&nbsp(&nbsp</div></div>
+				<div class="ui-block-d"><div class="ui-bar ui-bar-a ops" data-ops=')'>&nbsp)&nbsp</div></div>
+			</div><!-- /grid-a -->
+			<hr/>
+			<!--
+			<a href="#" class="ui-btn ui-btn-inline ops" data-ops='+'>&nbsp+&nbsp</a>
+			<a href="#" class="ui-btn ui-btn-inline ops" data-ops='-'>&nbsp-&nbsp</a>
+			<a href="#" class="ui-btn ui-btn-inline ops" data-ops='*'>&nbsp*&nbsp</a>
+			<a href="#" class="ui-btn ui-btn-inline ops" data-ops='/'>&nbsp/&nbsp</a>
+			<a href="#" class="ui-btn ui-btn-inline ops" data-ops='%'>&nbsp%&nbsp</a>
+			<a href="#" class="ui-btn ui-btn-inline ops" data-ops='^'>&nbsp^&nbsp</a>
+			<a href="#" class="ui-btn ui-btn-inline ops" data-ops='('>&nbsp(&nbsp</a>
+			<a href="#" class="ui-btn ui-btn-inline ops" data-ops=')'>&nbsp)&nbsp</a>
+			-->
+			<div id="numbers">
+				<h4 style = "margin:0px;padding:0px">Use following numbers : </h4>
+				<div class="ui-grid-d" id="num" style = "margin:0px;padding:0px">
+					<div class=' ui-block-a' data-num='4'>
+						<div class='ui-bar ui-bar-a numques'>4</div>
+					</div>
+					<div class=' ui-block-b' data-num='1'>
+						<div class='ui-bar ui-bar-a numques'>1</div>
+					</div>
+					<div class=' ui-block-c' data-num='1'>
+						<div class='ui-bar ui-bar-a numques'>1</div>
+					</div>
+					<div class=' ui-block-d' data-num='4'>
+						<div class='ui-bar ui-bar-a numques'>4</div>
+					</div>
+				</div>				
+			</div>
+			<hr/>
+			<div id="result">
+				<h3 style = "margin:0px;padding:0px">You have to make : <span id="res"></span></h3> 
+			</div>
+			<br/>
+			<div id="hint">
+				<a href="#" id="hintclick">Click here for Answer</a>
+				<span class="hintans"></span>
+			</div>
+			<div id="form" style = "margin:0px;padding:0px">
+				<input type="text" id="userans" name="ans" value="" />
+				
+				<div class="ui-grid-a">
+					<div class=' ui-block-a'  style = "margin:0px;padding:0px">
+						<div class='ui-bar'><button class="ui-shadow ui-btn ui-corner-all" id="clear">Clear</button></div>
+					</div>
+					<div class=' ui-block-b'  style = "margin:0px;padding:0px">
+						<div class='ui-bar'><button class="ui-shadow ui-btn ui-corner-all" id="usersubmit">Enter</button></div>
+					</div>
+				</div>
+				<button class="ui-shadow ui-btn ui-corner-all" id="gameskip">Next Game</button>
+			</div>
+
+		<button class="ui-shadow ui-btn ui-corner-all" id="gotohomefromgame">Go To Home</button>			
+		</div><!-- /content -->
+
+	</div><!-- /page -->
+	<div data-role="page" id="success" data-theme="a">
+
+		<div data-role="header" data-theme="a">
+			<h1>Crazy Digits</h1>
+		</div><!-- /header -->
+
+		<div role="main" class="ui-content" data-theme="a">
+			<div style="text-align:center; font-size:30px;font-family: serif;">Great Job!!! You did well.</div>
+			<br/>
+			<div><b>Your Current Score&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="successscore"></span> </div>
+			<br/>
+			<button class="ui-shadow ui-btn ui-corner-all playmore">Play More. Earn More.</button>
+		</div><!-- /content -->
+	</div><!-- /page -->
+	<div data-role="page" id="failure" data-theme="a">
+
+		<div data-role="header" data-theme="a">
+			<h1>Crazy Digits</h1>
+		</div><!-- /header -->
+
+		<div role="main" class="ui-content" data-theme="b">
+			<div style="text-align:center; font-size:30px;font-family: serif;">OOPS!!! Your solution is wrong.</div>
+			<hr/>
+			<div><b>Your solution&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="yoursolution"></span></div>
+			<div><b>Result&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="yourresult"></span></div>
+			<br/>
+			<div><b>Expected solution&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="expectedsol"></span></div>
+			<div><b>Expected result&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="expectedresult"></span></div>
+			<hr/>
+			<div><b>Your Current Score&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="failscore"></span> </div>
+			<hr/>
+			<!--
+			<a href="http://www.sherv.net/"><img alt="Sad face" width=200 height=200 src="http://www.sherv.net/cm/emo/sad/sad-face.gif"></a>
+			-->
+			<button class="ui-shadow ui-btn ui-corner-all playmore">Try More</button>
+		</div><!-- /content -->
+	</div><!-- /page -->
+	<div data-role="page" id="bonus" data-theme="a">
+
+		<div data-role="header" data-theme="a">
+			<h1>Crazy Digits</h1>
+		</div><!-- /header -->
+
+		<div role="main" class="ui-content" data-theme="b">
+			Congrates you got bonus point. :)
+			<button class="ui-shadow ui-btn ui-corner-all playmore">Play More</button>
+		</div><!-- /content -->
+	</div><!-- /page -->
+
+	<script type="text/javascript">
+</script>
+</body>
+
+</html>
