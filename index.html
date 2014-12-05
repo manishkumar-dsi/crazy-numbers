@@ -13,7 +13,7 @@
 	<script src="js/jquery-ui.min.js"></script>
 	
 	<style type="text/css" media="screen">
-
+	
 	<style type="text/css" media="screen">
 		
 		.ops {
@@ -84,7 +84,7 @@
 				userSolution = '';
 
 				temp = window.localStorage.getItem("gameScore");
-				if (isNaN(temp)) {
+				if (isNaN(temp) || typeof temp == 'undfined') {
 					window.localStorage.setItem("gameScore", gameScore);			
 				}
 				window.localStorage.setItem("gameLevel", gameLevel);
@@ -127,8 +127,8 @@
 				res = Math.abs(Math.floor(res));
 
 				if (typeof tempres === 'undefined' || tempres == '' || isNaN(tempres)) {
-				
-				/*				
+/*				
+								
 					if (skipCounter > 3) {
 						$.mobile.changePage( "#failure", { transition: "flip"} );
 						$('#userans').val('');
@@ -144,7 +144,7 @@
 					} else {
 						gameStart();
 					}
-				*/			
+*/
 				};
 				$("#res").html(res);
 				setNumbers(numbers);
@@ -181,14 +181,11 @@
 					finalRes = eval(str);
 					finalRes = parseInt(Math.abs(Math.floor(finalRes)));
 					res = parseInt(res);
-					console.log(finalRes);
-					console.log(res);
 					if (res == finalRes) {
 						var temp = parseInt(window.localStorage.getItem("gameScore"));
 						gameScore = eval( temp + 1);
 						localStorage.setItem("gameScore", gameScore);
 						$("#gameScore").html(window.localStorage.getItem("gameScore"));
-						//alert("success");
 						$.mobile.changePage( "#success", { transition: "flip"} );
 						$("#successscore").html(window.localStorage.getItem("gameScore"));
 						$('#userans').val('');
@@ -265,14 +262,16 @@
 				//$("#dynamic").html(str);
 				str += "<div class='ui-grid-b'>";
 				str += "<div class='ui-block-a'></div>";
-				str += "<div class='ui-block-b' style='padding-right:100px;'>" + 
-						"<h2>" + localStorage.getItem("gameScore") + "</h2></div>";
+				str += "<div class='ui-block-b'>" + 
+						"<center><h2>" + localStorage.getItem("gameScore") + "</h2></center></div>";
 	    		str += "<div class='ui-block-c'></div>";
 				str += "</div>";
 				$("#dynamic").html(str);
 			});
 
 			function numberEntryCheck(str) {
+				var tempCount = new Array();
+				
 				if (str === null || str == '' || typeof str === 'undefined') {
 					return false;
 				};
@@ -286,16 +285,25 @@
 				while(1) {
 					var eNum = eNumber.pop();
 					if (typeof eNum === 'undefined') {
-						return true;
+						break;
 					};
 					if (!isNaN(eNum)) {
 						var res = $.inArray(parseInt(eNum),tempNum);
 						if (res == -1) {
 							return false;
+						} else {
+							var i = parseInt(eNum);
+							tempCount.push(i);
 						}
 					}
 				}
-				return true;
+				
+				if(tempCount.length == tempNum.length){
+					return true;
+				} else {
+					return false;
+				}
+
 			}
 
 			function giveBonusPoint() {
@@ -354,7 +362,6 @@
 			function resultGenerator(operator, num1, num2) {
 				result = '';
 				op = '';
-				console.log(operator);
 				switch(operator) {
 					case '+' : result = num1 + num2; break;
 					case '-' : result = num1 - num2; break;
@@ -363,12 +370,7 @@
 					case '^' : result = Math.pow(num1, num2); break;
 					case '%' : result = num1 % num2; break;
 				}
-				if (typeof result === "undefined" || result == "") {
-					resultGenerator();
-				} else {
-					return result;	
-				}
-				
+				return result;				
 			}
 
 		} else {
@@ -522,3 +524,4 @@
 </body>
 
 </html>
+
