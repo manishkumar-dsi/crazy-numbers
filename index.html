@@ -3,17 +3,17 @@
 <title></title>
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
-	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.2/modernizr.min.js"></script>
-	<script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.css" />
+	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="js/modernizr.min.js"></script>
+	<script type="text/javascript" src="js/jquery-mobile.js"></script>
+	<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
 	<link rel="stylesheet" href="css/numbergametheme.min.css" />
 	<link rel="stylesheet" href="css/jquery.mobile.icons.min.css" />
-	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
 	
-	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+	<script src="js/jquery-ui.min.js"></script>
+	
 	<style type="text/css" media="screen">
-		
+
 	<style type="text/css" media="screen">
 		
 		.ops {
@@ -250,12 +250,12 @@
 				e.preventDefault();
 				$("#dynamic").html("");
 				var str = "<h2>Simple Game for BadAss. Are You?</h2>";
-				str += "<h3>We will give you a list operators : &nbsp;+&nbsp;&nbsp;,&nbsp;-&nbsp;,&nbsp;&nbsp;*&nbsp;,&nbsp;&nbsp;/&nbsp;,^&nbsp;,&nbsp;&nbsp;%&nbsp;.<br/><br/>";
+				str += "<h4>We will give you a list operators : &nbsp;+&nbsp;&nbsp;,&nbsp;-&nbsp;,&nbsp;&nbsp;*&nbsp;,&nbsp;&nbsp;/&nbsp;,^&nbsp;,&nbsp;&nbsp;%&nbsp;.<br/><br/>";
 				str += "We will give you 4 child numbers and a Boss number.<br/>";
 				str += "Use given operators, 4 numbers and your brain.<br/>";
-				str += "And make this Boss number.</h3>";
-				str += "<h2> Boss Number will always be an absolute and positive number. Ex : Suppose you got boss Number = - 4.65 so answer will be 4 </h2>";
-				str += "<h2>Easy!!! So comeon make your brain sharp.</h2>";
+				str += "And make this Boss number.</h4>";
+				str += "<h4> Boss Number will always be an absolute and positive number. Ex : Suppose you got boss Number = - 4.65 so answer will be 4 </h4>";
+				str += "<h4>Easy!!! So come on to the arina and prove yourself.</h4>";
 				$("#dynamic").html(str);
 			});
 
@@ -396,7 +396,7 @@
 	<div data-role="page" id="game" data-theme="a"  data-cache="false">
 
 		<div data-role="header" data-theme="a">
-			<h1>Crazy Digits</h1>
+			<h1>Crazy Numbers</h1>
 			<a href="#" id='gameScore' data-icon="gear" class="ui-btn-right">10</a>
 		</div><!-- /header -->
 
