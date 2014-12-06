@@ -13,7 +13,7 @@
 	<script src="js/jquery-ui.min.js"></script>
 	
 	<style type="text/css" media="screen">
-	
+
 	<style type="text/css" media="screen">
 		
 		.ops {
@@ -73,7 +73,7 @@
 			function gameStart() {
 				$(".hintans").html("");
 				gameLevel = 1;
-				gameScore = 0;
+				gameScore = 1;
 				res = '';
 				numbers = new Array();
 				usedOperators = new Array();
@@ -88,8 +88,12 @@
 					window.localStorage.setItem("gameScore", gameScore);			
 				}
 				window.localStorage.setItem("gameLevel", gameLevel);
-
-				$("#gameScore").html(parseInt(window.localStorage.getItem("gameScore")));
+				var currentScore = parseInt(window.localStorage.getItem("gameScore"));
+				if(currentScore == 0 || typeof currentScore == 'undefined' || isNaN(currentScore)) {
+					$("#gameScore").html('0');
+				} else {
+					$("#gameScore").html(parseInt(window.localStorage.getItem("gameScore")));
+				}
 
 				for (var i = 3; i >= 0; i--) {
 					number1[i] = Math.floor((Math.random() * 10) + 1);
@@ -187,7 +191,13 @@
 						localStorage.setItem("gameScore", gameScore);
 						$("#gameScore").html(window.localStorage.getItem("gameScore"));
 						$.mobile.changePage( "#success", { transition: "flip"} );
-						$("#successscore").html(window.localStorage.getItem("gameScore"));
+						if(isNaN(window.localStorage.getItem("gameScore"))) {
+							window.localStorage.setItem("gameScore", 1);
+							$("#successscore").html("1");
+						} else {
+							$("#successscore").html(window.localStorage.getItem("gameScore"));
+						}
+						
 						$('#userans').val('');
 					} else {
 						//alert("fail");
@@ -259,11 +269,17 @@
 			$("#yourScore").click(function(e){
 				e.preventDefault();
 				var str = "";
+				var score = 0;
+				if(localStorage.getItem("gameScore") == null || typeof localStorage.getItem("gameScore") == 'undefined') {
+					score = 0;
+				} else {
+					score = localStorage.getItem("gameScore");				
+				}
 				//$("#dynamic").html(str);
 				str += "<div class='ui-grid-b'>";
 				str += "<div class='ui-block-a'></div>";
 				str += "<div class='ui-block-b'>" + 
-						"<center><h2>" + localStorage.getItem("gameScore") + "</h2></center></div>";
+						"<center><h2>" + score + "</h2></center></div>";
 	    		str += "<div class='ui-block-c'></div>";
 				str += "</div>";
 				$("#dynamic").html(str);
@@ -399,7 +415,7 @@
 
 		<div data-role="header" data-theme="a">
 			<h1>Crazy Numbers</h1>
-			<a href="#" id='gameScore' data-icon="gear" class="ui-btn-right">10</a>
+			<a href="#" id='gameScore' data-icon="gear" class="ui-btn-right">0</a>
 		</div><!-- /header -->
 
 		<div role="main" class="ui-content" data-theme="a">
@@ -496,8 +512,8 @@
 			<div><b>Your solution&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="yoursolution"></span></div>
 			<div><b>Result&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="yourresult"></span></div>
 			<br/>
-			<div><b>Expected solution&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="expectedsol"></span></div>
-			<div><b>Expected result&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="expectedresult"></span></div>
+			<div><b>Probable solution&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="expectedsol"></span></div>
+			<div><b>Probable result&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="expectedresult"></span></div>
 			<hr/>
 			<div><b>Your Current Score&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;</b><span id="failscore"></span> </div>
 			<hr/>
